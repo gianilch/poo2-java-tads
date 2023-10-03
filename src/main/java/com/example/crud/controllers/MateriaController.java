@@ -1,11 +1,8 @@
 package com.example.crud.controllers;
 
 import com.example.crud.domain.materia.MateriaEntity;
-import com.example.crud.repositories.MateriaRepository;
 import com.example.crud.domain.materia.RequestMateria;
 import com.example.crud.services.MateriaService;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +34,6 @@ public class MateriaController {
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity deleteMateria(@PathVariable Long id){
         service.deleteMateria(id);
         return ResponseEntity.noContent().build();
