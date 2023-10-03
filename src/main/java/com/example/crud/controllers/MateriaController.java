@@ -3,6 +3,7 @@ package com.example.crud.controllers;
 import com.example.crud.domain.materia.MateriaEntity;
 import com.example.crud.repositories.MateriaRepository;
 import com.example.crud.domain.materia.RequestMateria;
+import com.example.crud.services.MateriaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -16,43 +17,29 @@ import java.util.Optional;
 @RequestMapping("/materia")
 public class MateriaController {
     @Autowired
-    private MateriaRepository repository;
+    private MateriaService service;
     @GetMapping
     public ResponseEntity getAllMaterias(){
-        var allMaterias = repository.findAllByActiveTrue();
+        var allMaterias = service.getAllMaterias();
         return ResponseEntity.ok(allMaterias);
     }
 
     @PostMapping
     public ResponseEntity registerMateria(@RequestBody @Valid RequestMateria data ){
-    MateriaEntity newMateria = new MateriaEntity(data);
-    repository.save(newMateria);
-    return ResponseEntity.ok().build();
+        MateriaEntity newMateria = service.registerMateria(data);
+        return ResponseEntity.ok(newMateria);
     }
 
     @PutMapping("/{id}")
-    @Transactional
     public ResponseEntity updateMateria(@PathVariable Long id, @RequestBody @Valid RequestMateria data ){
-        Optional<MateriaEntity> optionalMateria = repository.findById(id);
-        if(optionalMateria.isPresent()) {
-            MateriaEntity materia = optionalMateria.get();
-            materia.setName(data.name());
-            return ResponseEntity.ok(materia);
-        } else {
-        return ResponseEntity.notFound().build();
-        }
+        MateriaEntity materia = service.updateMateria(id, data);
+        return ResponseEntity.ok(materia);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deleteMateria(@PathVariable Long id){
-        Optional<MateriaEntity> optionalMateria = repository.findById(id);
-        if(optionalMateria.isPresent()) {
-            MateriaEntity materia = optionalMateria.get();
-            materia.setActive(false);
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new EntityNotFoundException();
-        }
+        service.deleteMateria(id);
+        return ResponseEntity.noContent().build();
     }
 }
